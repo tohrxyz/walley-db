@@ -15,17 +15,6 @@ type Command struct {
 	Name    string
 }
 
-func isWithinPossibilities(input string, possibilities []string) bool {
-	isWithin := false
-	for _, in := range possibilities {
-		if input == in {
-			isWithin = true
-			break
-		}
-	}
-	return isWithin
-}
-
 func main() {
 	args := os.Args[1:]
 	fmt.Println(args)
@@ -35,14 +24,14 @@ func main() {
 	}
 
 	action := args[0]
-	isValidAction := isWithinPossibilities(action, POSSIBLE_ACTIONS)
+	isValidAction := lib.IsWithinPossibilities(action, POSSIBLE_ACTIONS)
 	fmt.Printf("Is %s valid action: %t\n", action, isValidAction)
 	if !isValidAction {
 		panic(action + " " + "is not a valid action")
 	}
 
 	subject := args[1]
-	isValidSubject := isWithinPossibilities(subject, POSSIBLE_SUBJECTS)
+	isValidSubject := lib.IsWithinPossibilities(subject, POSSIBLE_SUBJECTS)
 	fmt.Printf("Is %s valid subject: %t\n", subject, isValidSubject)
 	if !isValidAction {
 		panic(subject + " " + "is not a valid subject")
