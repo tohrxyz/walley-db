@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"os"
+	"walley-db/main/lib"
 )
 
 var POSSIBLE_ACTIONS = []string{"CREATE", "UPDATE", "INSERT", "DELETE"}
@@ -23,23 +24,6 @@ func isWithinPossibilities(input string, possibilities []string) bool {
 		}
 	}
 	return isWithin
-}
-
-func create(subject string, name string) error {
-
-}
-func insert(subject string, name string) error {
-
-}
-func update(subject string, name string) error {
-
-}
-func delete(subject string, name string) error {
-
-}
-
-func table(subject string, name string, method string) error {
-
 }
 
 func main() {
@@ -69,19 +53,19 @@ func main() {
 	switch action {
 	case POSSIBLE_ACTIONS[0]:
 		fmt.Println("creating...")
-		create(subject, name)
+		lib.Create(subject, name)
 		break
 	case POSSIBLE_ACTIONS[1]:
 		fmt.Println("updating...")
-		update(subject, name)
+		lib.Update(subject, name)
 		break
 	case POSSIBLE_SUBJECTS[2]:
 		fmt.Println("inserting...")
-		insert(subject, name)
+		lib.Insert(subject, name)
 		break
 	case POSSIBLE_ACTIONS[3]:
 		fmt.Println("deleting...")
-		delete(subject, name)
+		lib.Delete(subject, name)
 		break
 	}
 }
