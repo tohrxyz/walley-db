@@ -1,6 +1,7 @@
 package lib
 
 import (
+	"fmt"
 	"os"
 	"path"
 )
@@ -71,4 +72,23 @@ func WriteToFile(filepath string, data []byte) error {
 	}
 
 	return nil
+}
+
+func ReadFromFile(filepath string) ([]byte, error) {
+	fileExists := CheckIfFileOrDirExists(filepath)
+	if !fileExists {
+		return nil, fmt.Errorf("file does not exist: %s\n", filepath)
+	}
+
+	// f, err := os.Open(filepath)
+	// if err != nil {
+	// 	return nil, err
+	// }
+	// defer f.Close()
+
+	data, err := os.ReadFile(filepath)
+	if err != nil {
+		return nil, err
+	}
+	return data, nil
 }
