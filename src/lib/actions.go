@@ -3,8 +3,6 @@ package lib
 import "fmt"
 
 func Create(subject string, name string) error {
-	fmt.Println("create")
-
 	switch subject {
 	case "TABLE":
 		err := Table(subject, name, "CREATE")
