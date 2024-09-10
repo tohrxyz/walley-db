@@ -28,17 +28,16 @@ func Update(subject string, name string) error {
 	return nil
 }
 
-func Insert(subject string, name string) error {
-	fmt.Println("insert")
+func Insert(subject string, name string, args []string) error {
 
-	// switch subject {
-	// case "TABLE":
-	// 	err := Table(subject, name, "INSERT")
-	// 	if err != nil {
-	// 		return err
-	// 	}
-	// 	break
-	// }
+	switch subject {
+	case "TABLE":
+		err := Table(subject, name, "INSERT", args)
+		if err != nil {
+			return err
+		}
+		break
+	}
 	return nil
 }
 

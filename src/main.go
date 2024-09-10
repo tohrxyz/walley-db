@@ -56,9 +56,8 @@ func main() {
 		fmt.Println("updating...")
 		lib.Update(subject, name)
 		break
-	case POSSIBLE_SUBJECTS[2]:
-		fmt.Println("inserting...")
-		lib.Insert(subject, name)
+	case POSSIBLE_ACTIONS[2]:
+		lib.Insert(subject, name, additionalArgs)
 		break
 	case POSSIBLE_ACTIONS[3]:
 		fmt.Println("deleting...")
