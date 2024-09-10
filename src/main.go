@@ -16,6 +16,14 @@ type Command struct {
 }
 
 func main() {
+	// get home dir and create directory for db files, if it doesn't exist yet
+	dbPath := lib.GetDbPath()
+	err := lib.CreateDirIfNotExists(dbPath, true)
+	if err != nil {
+		panic(err)
+	}
+
+	// get cli args, expect ACTION SUBJECT name
 	args := os.Args[1:]
 	fmt.Println(args)
 
@@ -41,7 +49,6 @@ func main() {
 
 	switch action {
 	case POSSIBLE_ACTIONS[0]:
-		fmt.Println("creating...")
 		lib.Create(subject, name)
 		break
 	case POSSIBLE_ACTIONS[1]:
