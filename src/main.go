@@ -46,10 +46,11 @@ func main() {
 	}
 
 	name := args[2]
+	additionalArgs := args[3:]
 
 	switch action {
 	case POSSIBLE_ACTIONS[0]:
-		lib.Create(subject, name)
+		lib.Create(subject, name, additionalArgs)
 		break
 	case POSSIBLE_ACTIONS[1]:
 		fmt.Println("updating...")
