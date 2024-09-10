@@ -1,11 +1,13 @@
 package lib
 
-import "fmt"
+import (
+	"fmt"
+)
 
-func Table(subject string, name string, method string) error {
+func Table(subject string, name string, method string, args []string) error {
 	switch method {
 	case "CREATE":
-		err := DeclareTableConf(name)
+		err := DeclareTableConf(name, args)
 		if err != nil {
 			return err
 		}
@@ -14,7 +16,7 @@ func Table(subject string, name string, method string) error {
 	return nil
 }
 
-func DeclareTableConf(tableName string) error {
+func DeclareTableConf(tableName string, args []string) error {
 	filepathDir := FilepathFromTableName(tableName, true)
 	fmt.Printf("LOG: filepathDir: %v\n", filepathDir)
 	err := CreateDirIfNotExists(filepathDir, false)
@@ -30,6 +32,23 @@ func DeclareTableConf(tableName string) error {
 		return err
 	}
 	fmt.Println("LOG: File for table " + tableName + " successfully created.")
+
+	confFilepath := filepathDir + "/" + tableName + ".conf"
+	err = CreateFileIfNotExists(confFilepath)
+	if err != nil {
+		return err
+	}
+	fmt.Printf("LOG: Conf file for table %v successfully created at %v\n", tableName, confFilepath)
+
+	var dataToWrite []byte
+	for _, arg := range args {
+		dataToWrite = append(dataToWrite, []byte("\n"+arg)...)
+	}
+	err = WriteToFile(confFilepath, dataToWrite)
+	if err != nil {
+		return err
+	}
+	fmt.Printf("LOG: Write of table conf at %v was successfull.", confFilepath)
 
 	return nil
 }
