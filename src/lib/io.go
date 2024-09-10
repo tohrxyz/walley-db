@@ -48,6 +48,8 @@ func CreateDirIfNotExists(filepath string, isAbsolutePath bool) error {
 	return nil
 }
 
+// !!! dont forget to write only to the length of declared column type size
+// ...in <table_name>.conf file.
 func WriteToFile(filepath string, data []byte) error {
 	if !CheckIfFileOrDirExists(filepath) {
 		err := CreateFileIfNotExists(filepath)
