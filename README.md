@@ -1,4 +1,4 @@
-# Walley-DB
+# 🚧 Walley-DB
 Hobby binary-based database implementation in Golang
 
 ## Usage
@@ -28,3 +28,6 @@ this saves the whole table under `~/.walleydb/users` and configuration file `~/.
 id:int=8
 name:string=20
 ```
+
+## 👷‍♂️ Under construction
+The whole thing is at the very beginnings, I'm trying to learn a lot of things during this time and will update this projects based on my accomplishments. It's not necessarily meant to be a production-grade DB, just an experiment on what I can come up with.
