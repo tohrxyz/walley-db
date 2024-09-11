@@ -2,7 +2,6 @@ package lib
 
 import (
 	"fmt"
-	"strconv"
 	"strings"
 )
 
@@ -60,12 +59,6 @@ func DeclareTableConf(tableName string, args []string) error {
 	return nil
 }
 
-type ConfArg struct {
-	name       string
-	dataType   string
-	byteLenght int64
-}
-
 func InsertIntoTable(name string, args []string) error {
 	// filepath := FilepathFromTableName(name, false)
 	confPath := GetDbPath() + "/" + name + "/" + name + ".conf"
@@ -74,29 +67,27 @@ func InsertIntoTable(name string, args []string) error {
 	if err != nil {
 		panic(err)
 	}
-	fmt.Printf("Data: %v\n", string(data))
-	confArgs := strings.Split(string(data), "\n")
-	var columnArgs []ConfArg
-	for _, line := range confArgs {
-		if line == "" {
-			continue
-		}
-
-		name := strings.Split(line, ":")[0]
-		dataType := strings.Split(strings.Split(line, ":")[1], "=")[0]
-		byteLength, err := strconv.ParseInt(strings.Split(strings.Split(line, ":")[1], "=")[1], 10, 8)
-		if err != nil {
-			panic(err)
-		}
-		currConfArg := ConfArg{
-			name:       name,
-			dataType:   dataType,
-			byteLenght: byteLength,
-		}
-		columnArgs = append(columnArgs, currConfArg)
+	rawStringData := string(data)
+	columnArgs, err := RawStringToStruct(rawStringData)
+	if err != nil {
+		return err
 	}
 	fmt.Printf("%v\n", columnArgs)
+
+	// cli: id=144 name=Peter
 	// 2. check if args are valid based on conf
+	rawStringDataArray := strings.Split(rawStringData, "\n")[1:] //1: because 0th is blank
+	areArgsValid := true
+	for i, arg := range args {
+		if !isArgValidFromConf(arg, rawStringDataArray[i]) {
+			areArgsValid = false
+		}
+		fmt.Printf("LOG: %v is valid arg\n", arg)
+	}
+	fmt.Println("Are args from cli valid based on conf?: ", areArgsValid)
+	if !areArgsValid {
+		panic("invalid args from cli compared to conf")
+	}
 	// 3. write new record !!! only up to conf column lenght
 	return nil
 }
