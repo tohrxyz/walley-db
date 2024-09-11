@@ -89,5 +89,16 @@ func InsertIntoTable(name string, args []string) error {
 		panic("invalid args from cli compared to conf")
 	}
 	// 3. write new record !!! only up to conf column lenght
+	var dataToWrite []byte
+	for _, arg := range args {
+		extractedVal := strings.Split(arg, "=")[1]
+		dataToWrite = append(dataToWrite, []byte(extractedVal)...)
+	}
+	err = WriteToFile(FilepathFromTableName(name, false), dataToWrite)
+	if err != nil {
+		fmt.Errorf("ERROR: Problem with inserting into table, unable to save: %v\n", err)
+		panic(err)
+	}
+	fmt.Printf("LOG: Successfully inserted to db table %v\n", name)
 	return nil
 }
