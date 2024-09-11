@@ -60,10 +60,8 @@ func DeclareTableConf(tableName string, args []string) error {
 }
 
 func InsertIntoTable(name string, args []string) error {
-	// filepath := FilepathFromTableName(name, false)
-	confPath := GetDbPath() + "/" + name + "/" + name + ".conf"
 	// 1. load conf
-	data, err := ReadFromFile(confPath)
+	data, err := LoadConfForTable(name)
 	if err != nil {
 		panic(err)
 	}
@@ -89,16 +87,33 @@ func InsertIntoTable(name string, args []string) error {
 		panic("invalid args from cli compared to conf")
 	}
 	// 3. write new record !!! only up to conf column lenght
+	recordLen, err := GetRecordByteLength(name)
+	if err != nil {
+		panic(err)
+	}
 	var dataToWrite []byte
 	for _, arg := range args {
 		extractedVal := strings.Split(arg, "=")[1]
 		dataToWrite = append(dataToWrite, []byte(extractedVal)...)
 	}
-	err = WriteToFile(FilepathFromTableName(name, false), dataToWrite)
+	fmt.Printf("dataToWRite len: %v\n", len(dataToWrite))
+	err = WriteToFile(FilepathFromTableName(name, false), dataToWrite[:recordLen])
 	if err != nil {
 		fmt.Errorf("ERROR: Problem with inserting into table, unable to save: %v\n", err)
 		panic(err)
 	}
 	fmt.Printf("LOG: Successfully inserted to db table %v\n", name)
 	return nil
+}
+
+func LoadConfForTable(tableName string) ([]byte, error) {
+	confPath := GetDbPath() + "/" + tableName + "/" + tableName + ".conf"
+	data, err := ReadFromFile(confPath)
+	if err != nil {
+		// panic(err)
+		fmt.Errorf("ERROR: Can't load conf file: %v\n", err)
+		return nil, err
+	}
+
+	return data, nil
 }
