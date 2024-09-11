@@ -4,6 +4,8 @@ import (
 	"fmt"
 	"os"
 	"path"
+	"strconv"
+	"strings"
 )
 
 func FilepathFromTableName(tableName string, isDir bool) string {
@@ -91,4 +93,24 @@ func ReadFromFile(filepath string) ([]byte, error) {
 		return nil, err
 	}
 	return data, nil
+}
+
+func GetRecordByteLength(tableName string) (int, error) {
+	conf, err := LoadConfForTable(tableName)
+	if err != nil {
+		return 0, err
+	}
+	confStr := strings.Split(string(conf), "\n")[1:]
+	sumLen := 0
+	for _, line := range confStr {
+		valStr := strings.Split(line, "=")[1]
+		val, err := strconv.Atoi(valStr)
+		if err != nil {
+			fmt.Errorf("ERROR: Can't parse byte length: %v\n", err)
+			return 0, err
+		}
+		sumLen += val
+	}
+	fmt.Printf("LOG: Record byte length: %v\n", sumLen)
+	return sumLen, nil
 }
