@@ -96,6 +96,18 @@ func InsertIntoTable(name string, args []string) error {
 	for j, arg := range args {
 		extractedVal := strings.Split(arg, "=")[1]
 		exValPadded := make([]byte, eachRecordLen[j])
+		// everything is saved as UTF-8 string, even if it's e.g. int64 (8B)
+		// this is wip for saving int64 as int64 directly - not utf8 string
+		// but it needs to be dynamic based on conf file, not purely guesswork with 8B as default
+		// exValNumber, err := strconv.Atoi(extractedVal)
+		// if err == nil {
+		// 	b := make([]byte, 8)
+		// 	binary.LittleEndian.PutUint64(b, uint64(exValNumber))
+		// 	fmt.Printf("b: %v\n", b)
+		// 	copy(exValPadded, b)
+		// } else {
+		// 	copy(exValPadded, []byte(extractedVal))
+		// }
 		copy(exValPadded, []byte(extractedVal))
 		exValPaddedShiftedRight := shiftToRight(bytes.Clone(exValPadded), len([]byte(extractedVal)))
 		dataToWrite = append(dataToWrite, exValPaddedShiftedRight...)
@@ -134,4 +146,12 @@ func shiftToRight(currentArray []byte, nonZeroCount int) []byte {
 	}
 
 	return newArray
+}
+
+func Int64ToBytes(i int64) []byte {
+	b := make([]byte, 8)
+	for j := uint8(0); j < 8; j++ {
+		b[j] = byte(i >> (j * 8))
+	}
+	return b
 }
