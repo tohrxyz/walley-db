@@ -1,6 +1,7 @@
 package lib
 
 import (
+	"bytes"
 	"fmt"
 	"strings"
 )
@@ -93,15 +94,12 @@ func InsertIntoTable(name string, args []string) error {
 	}
 	var dataToWrite []byte
 	for j, arg := range args {
-		fmt.Println("j index: ", j)
 		extractedVal := strings.Split(arg, "=")[1]
 		exValPadded := make([]byte, eachRecordLen[j])
-		fmt.Printf("exValPadded: %v ;; len: %v\n", exValPadded, len(exValPadded))
 		copy(exValPadded, []byte(extractedVal))
-		fmt.Printf("exValPadded after: %v ;; len: %v\n", exValPadded, len(exValPadded))
-		dataToWrite = append(dataToWrite, exValPadded...)
+		exValPaddedShiftedRight := shiftToRight(bytes.Clone(exValPadded), len([]byte(extractedVal)))
+		dataToWrite = append(dataToWrite, exValPaddedShiftedRight...)
 	}
-	fmt.Printf("dataToWRite len: %v\n", len(dataToWrite))
 	err = WriteToFile(FilepathFromTableName(name, false), dataToWrite[:recordLen])
 	if err != nil {
 		fmt.Errorf("ERROR: Problem with inserting into table, unable to save: %v\n", err)
@@ -121,4 +119,19 @@ func LoadConfForTable(tableName string) ([]byte, error) {
 	}
 
 	return data, nil
+}
+
+// from [1, 2, 3, 0, 0]
+// to   [0, 0, 1, 2, 3]
+// in O(n)
+func shiftToRight(currentArray []byte, nonZeroCount int) []byte {
+	currlen := len(currentArray)
+	newArray := make([]byte, currlen)
+	for i := 0; i < nonZeroCount; i++ {
+		currElement := currentArray[i]
+		newPos := currlen - nonZeroCount + (i * 1)
+		newArray[newPos] = currElement
+	}
+
+	return newArray
 }
