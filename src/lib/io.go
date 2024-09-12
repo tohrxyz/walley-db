@@ -95,22 +95,25 @@ func ReadFromFile(filepath string) ([]byte, error) {
 	return data, nil
 }
 
-func GetRecordByteLength(tableName string) (int, error) {
+// reruns sum, []int for each arg, error
+func GetRecordByteLength(tableName string) (int, []int, error) {
 	conf, err := LoadConfForTable(tableName)
 	if err != nil {
-		return 0, err
+		return 0, nil, err
 	}
 	confStr := strings.Split(string(conf), "\n")[1:]
 	sumLen := 0
+	var eachLen []int
 	for _, line := range confStr {
 		valStr := strings.Split(line, "=")[1]
 		val, err := strconv.Atoi(valStr)
 		if err != nil {
 			fmt.Errorf("ERROR: Can't parse byte length: %v\n", err)
-			return 0, err
+			return 0, nil, err
 		}
 		sumLen += val
+		eachLen = append(eachLen, val)
 	}
 	fmt.Printf("LOG: Record byte length: %v\n", sumLen)
-	return sumLen, nil
+	return sumLen, eachLen, nil
 }

@@ -87,14 +87,19 @@ func InsertIntoTable(name string, args []string) error {
 		panic("invalid args from cli compared to conf")
 	}
 	// 3. write new record !!! only up to conf column lenght
-	recordLen, err := GetRecordByteLength(name)
+	recordLen, eachRecordLen, err := GetRecordByteLength(name)
 	if err != nil {
 		panic(err)
 	}
 	var dataToWrite []byte
-	for _, arg := range args {
+	for j, arg := range args {
+		fmt.Println("j index: ", j)
 		extractedVal := strings.Split(arg, "=")[1]
-		dataToWrite = append(dataToWrite, []byte(extractedVal)...)
+		exValPadded := make([]byte, eachRecordLen[j])
+		fmt.Printf("exValPadded: %v ;; len: %v\n", exValPadded, len(exValPadded))
+		copy(exValPadded, []byte(extractedVal))
+		fmt.Printf("exValPadded after: %v ;; len: %v\n", exValPadded, len(exValPadded))
+		dataToWrite = append(dataToWrite, exValPadded...)
 	}
 	fmt.Printf("dataToWRite len: %v\n", len(dataToWrite))
 	err = WriteToFile(FilepathFromTableName(name, false), dataToWrite[:recordLen])
